@@ -88,9 +88,21 @@ def k_shortest_paths(G, source, target, k=1, weight='weight'):
             for n in range(len(root_path) - 1):
                 node = root_path[n]
                 # out-edges
+                # for u, v, edge_attr in G.edges_iter(node, data=True):
+                #     G.remove_edge(u, v)
+                #     edges_removed.append((u, v, edge_attr))
+
+                # inicio modificacao Joahannes
+                temp_G = []
+                temp_edge_attr = []
                 for u, v, edge_attr in G.edges_iter(node, data=True):
-                    G.remove_edge(u, v)
-                    edges_removed.append((u, v, edge_attr))
+                    temp_G.append((u,v))
+                    temp_edge_attr.append((u, v, edge_attr))
+                for temp_remove in temp_G:
+                    G.remove_edge(temp_remove[0],temp_remove[1])
+                for temp_remove_edge_attr in temp_edge_attr:
+                    edges_removed.append((temp_remove_edge_attr[0],temp_remove_edge_attr[1],temp_remove_edge_attr[2]))
+                # final modificação Joahannes
                 
                 if G.is_directed():
                     # in-edges
@@ -128,44 +140,23 @@ def get_path_length(G, path, weight='weight'):
     
     return length    
     
-# if __name__ == "__main__":
-#      G = nx.DiGraph()
-#      G.add_edge('C', 'D', length=3, weight=1)
-#      G.add_edge('C', 'E', length=2, weight=2)
-#      G.add_edge('D', 'F', length=4, weight=3)
-#      G.add_edge('E', 'D', length=1, weight=4)
-#      G.add_edge('E', 'F', length=2, weight=5)
-#      G.add_edge('E', 'G', length=3, weight=6)
-#      G.add_edge('F', 'G', length=2, weight=7)
-#      G.add_edge('F', 'H', length=1, weight=8)
-#      G.add_edge('G', 'H', length=2, weight=9)
-#           
-#      for e in G.edges_iter(data=True):
-#          print e
-#       
-#      print
-#      print               
-#      print k_shortest_paths(G, 'C', 'H', 3, "length")
-#      print
-#      print 
-#           
-#      for e in G.edges_iter(data=True):
-#          print e             
-                
-    
-                
-#     G=nx.complete_graph(5)
-#     simple_paths = []
-#     for sp in nx.all_simple_paths(G, 0, 4):
-#         simple_paths.append(sp)    
-#       
-#     lengths, k_paths = k_shortest_paths(G, 0, 4, 100)
-#       
-#     for sp in simple_paths:
-#         if sp not in k_paths:
-#             print 'Not in k_paths:', sp
-#               
-#     for kp in k_paths:
-#         if kp not in simple_paths:
-#             print 'Not in simple paths', kp    
-    
+if __name__ == "__main__":
+
+    G = nx.DiGraph()
+    G.add_edge('A', 'B', length=7, weight=7)
+    G.add_edge('A', 'C', length=12, weight=12)
+    G.add_edge('B', 'C', length=2, weight=2)
+    G.add_edge('B', 'D', length=9, weight=9)
+    G.add_edge('C', 'E', length=10, weight=10)
+    G.add_edge('E', 'D', length=4, weight=4)
+    G.add_edge('E', 'F', length=5, weight=5)
+    G.add_edge('D', 'F', length=1, weight=1)
+
+    # TESTE DESCONEXAO
+    # G.add_edge('G', 'H', length=2, weight=10)
+
+    valor_k = 3
+
+    caminhos = k_shortest_paths(G, 'A', 'F', valor_k, "weight")
+    for i in range(len(caminhos[0])):
+        print(caminhos[0][i],caminhos[1][i])
